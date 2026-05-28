@@ -1,4 +1,4 @@
-import type { Horizon, SorobanRpc } from "@stellar/stellar-sdk";
+import type { Horizon, rpc } from "@stellar/stellar-sdk";
 
 // ─── Network ──────────────────────────────────────────────────────────────────
 
@@ -86,6 +86,7 @@ export interface UseFreighterReturn extends FreighterState {
   disconnect: () => void;
   signTransaction: (xdr: string, opts?: SignTransactionOptions) => Promise<string>;
   signAuthEntry: (entryPreimageXdr: string) => Promise<string>;
+  signBlob: (blob: string, opts?: { accountToSign?: string }) => Promise<string>;
 }
 
 export interface SignTransactionOptions {
@@ -127,6 +128,8 @@ export interface ContractCallOptions {
   fee?: number;
   /** Timeout in seconds. Defaults to 30 */
   timeoutSeconds?: number;
+  /** Custom Soroban RPC server instance. If not provided, one is created from the provider config. */
+  sorobanRpcServer?: rpc.Server;
 }
 
 export interface UseContractCallReturn<TResult = unknown> extends TransactionState<TResult> {
@@ -137,7 +140,7 @@ export interface UseContractCallReturn<TResult = unknown> extends TransactionSta
 // ─── Ledger Entry ─────────────────────────────────────────────────────────────
 
 export interface LedgerEntryState {
-  data: SorobanRpc.Api.LedgerEntryResult | null;
+  data: rpc.Api.LedgerEntryResult | null;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
